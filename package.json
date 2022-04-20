@@ -1,7 +1,7 @@
 {
-  "name": "fsio-chrome-extension",
+  "name": "upwork-chrome-extension",
   "version": "1.0.0",
-  "description": "A chrome extension for easy access to the filescan service",
+  "description": "A chrome extension for upwork",
   "license": "MIT",
   "scripts": {
     "build": "node utils/build.js",

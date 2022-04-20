@@ -40,6 +40,7 @@ var options = {
     background: path.join(__dirname, 'src', 'pages', 'Background', 'index.js'),
     contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.js'),
     panel: path.join(__dirname, 'src', 'pages', 'Panel', 'index.tsx'),
+    inject: path.join(__dirname, 'src', 'pages', 'Inject', 'index.js'),
   },
   chromeExtensionBoilerplate: {
     notHotReload: ['background', 'contentScript', 'devtools'],
@@ -142,6 +143,15 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
+          from: 'src/assets/libs/jquery.min.js',
+          to: path.join(__dirname, 'build'),
+          force: true,
+        },
+      ],
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
           from: 'src/assets/images/icon-128.png',
           to: path.join(__dirname, 'build'),
           force: true,
@@ -170,6 +180,15 @@ var options = {
       patterns: [
         {
           from: 'src/assets/images/icon-16.png',
+          to: path.join(__dirname, 'build'),
+          force: true,
+        },
+      ],
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'src/assets/images/icon-64.png',
           to: path.join(__dirname, 'build'),
           force: true,
         },
