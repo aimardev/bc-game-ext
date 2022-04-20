@@ -1,4 +1,9 @@
-const jobDescriptionClassName = 'cfe-ui-job-details-content';
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import { ProposalInput } from './ProposalInput';
+import './index.css';
+
 const editorBlockId = 'upwork-editor-block';
 const editorBlockClass = 'upwork-editor-block';
 
@@ -28,6 +33,10 @@ const addEditorBlock = () => {
 
 if (checkTheValidAddBlock()) {
   addEditorBlock();
+  ReactDOM.render(
+    <ProposalInput />,
+    window.document.querySelector(`#${editorBlockId}`)
+  );
 }
 
 console.log('[storage] this is injected');

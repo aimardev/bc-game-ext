@@ -22,6 +22,7 @@
   ],
   "web_accessible_resources": [
     "inject.js",
+    "bootstrap.min.css",
     "content.styles.css"
 
   ],
@@ -30,7 +31,7 @@
       "https://*.upwork.com/*"
     ],
     "js": [
-      "jquery.min.js",
+      "bootstrap.min.js",
       "contentScript.js"
     ],
     "css": [

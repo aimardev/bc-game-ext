@@ -14,7 +14,7 @@ function injectCSS(link) {
 }
 
 async function main() {
-  injectCSS(chrome.runtime.getURL('content.styles.css'));
+  injectCSS(chrome.runtime.getURL('bootstrap.min.css'));
   injectJs(chrome.runtime.getURL('inject.js'));
 }
 

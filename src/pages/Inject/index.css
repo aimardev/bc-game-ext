@@ -1,0 +1,9 @@
+.upwork-editor-block {
+  position: fixed;
+  width: 100vw;
+  height: 300px;
+  bottom: 0;
+  left: 0;
+  background: white;
+  border-top: 2px solid #777;
+}
