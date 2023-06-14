@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { ProposalInput } from './ProposalInput';
-import './index.css';
+import { ProposalPanel } from './Panel';
+import './index.scss';
 
 const editorBlockId = 'upwork-editor-block';
 const editorBlockClass = 'upwork-editor-block';
@@ -34,9 +34,7 @@ const addEditorBlock = () => {
 if (checkTheValidAddBlock()) {
   addEditorBlock();
   ReactDOM.render(
-    <ProposalInput />,
+    <ProposalPanel />,
     window.document.querySelector(`#${editorBlockId}`)
   );
 }
-
-console.log('[storage] this is injected');
