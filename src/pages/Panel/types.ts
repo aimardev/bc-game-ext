@@ -1,13 +1,20 @@
-export interface ScanInfo {
-  name: string;
-  hash: string;
-  created: Date;
-  result: string;
-  status: string;
+export interface GameInfo {
+  time: number;
+  summary: {
+    totalBet: number;
+    players: string;
+    totalProfit: number;
+  };
+  red: {
+    profit: number;
+  };
+  green: {
+    profit: number;
+  };
 }
 
 export type MenuItemType = {
   title: string;
   tab: string;
   component: CallableFunction;
-}
+};

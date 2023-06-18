@@ -11,8 +11,8 @@
     "128": "icon-128.png"
   },
   "manifest_version": 2,
-  "name": "Bid Support",
-  "description": "A chrome extension for easy access",
+  "name": "BCGame History",
+  "description": "A chrome extension for BCGame",
   "permissions": [
     "activeTab",
     "tabs",
@@ -20,24 +20,16 @@
     "https://*.upwork.com/*",
     "storage"
   ],
-  "web_accessible_resources": [
-    "inject.js",
-    "content.styles.css"
-
+  "web_accessible_resources": ["inject.js", "content.styles.css"],
+  "content_scripts": [
+    {
+      "matches": ["https://*.upwork.com/*"],
+      "js": ["contentScript.js"],
+      "css": ["content.styles.css"],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
   ],
-  "content_scripts": [{
-    "matches": [
-      "https://*.upwork.com/*"
-    ],
-    "js": [
-      "contentScript.js"
-    ],
-    "css": [
-      "content.styles.css"
-    ],
-    "all_frames": true,
-    "run_at": "document_start"
-  }],
   "background": {
     "service_worker": "background.js"
   }

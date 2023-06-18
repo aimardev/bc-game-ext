@@ -7,7 +7,6 @@ import './Panel.css';
 const Panel = () => {
   return (
     <div className="container">
-      <Header />
       <Main />
     </div>
   );
