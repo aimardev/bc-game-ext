@@ -1,36 +1,48 @@
 {
-  "browser_action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon-32.png"
-  },
-  "icons": {
-    "16": "icon-16.png",
-    "32": "icon-32.png",
-    "48": "icon-48.png",
-    "64": "icon-64.png",
-    "128": "icon-128.png"
-  },
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "BCGame History",
-  "description": "A chrome extension for BCGame",
-  "permissions": [
-    "activeTab",
-    "tabs",
-    "contextMenus",
-    "https://*.upwork.com/*",
-    "storage"
-  ],
-  "web_accessible_resources": ["inject.js", "content.styles.css"],
-  "content_scripts": [
-    {
-      "matches": ["https://*.upwork.com/*"],
-      "js": ["contentScript.js"],
-      "css": ["content.styles.css"],
-      "all_frames": true,
-      "run_at": "document_start"
-    }
-  ],
+  "description": "A chrome extension for bcgame",
+  "version": "1.0",
+  "action": {
+    "default_icon": {
+      "16": "./icon-16.png",
+      "32": "./icon-32.png",
+      "48": "./icon-48.png",
+      "64": "./icon-64.png",
+      "128": "./icon-128.png"
+    },
+    "default_popup": "popup.html"
+  },
   "background": {
     "service_worker": "background.js"
+  },
+  "permissions": ["activeTab", "scripting", "tabs", "contextMenus", "storage"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://bc.game/*",
+        "https://hash.game/*",
+        "https://bc.fun/*",
+        "https://bc.co/*",
+        "https://bc.app/*",
+        "https://bcga.me/*",
+        "https://bcgame.ph/*",
+        "https://bcgame.im/*",
+        "https://bcgame.ai/*",
+        "https://bc.online/*",
+        "https://bc.casino/*",
+        "https://bcstavka.com/*"
+      ],
+      "js": ["inject.js"],
+      "css": ["content.styles.css"],
+      "all_frames": true
+    }
+  ],
+  "icons": {
+    "16": "./icon-16.png",
+    "32": "./icon-32.png",
+    "48": "./icon-48.png",
+    "64": "./icon-64.png",
+    "128": "./icon-128.png"
   }
 }

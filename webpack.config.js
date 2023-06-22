@@ -38,8 +38,6 @@ var options = {
   entry: {
     popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.jsx'),
     background: path.join(__dirname, 'src', 'pages', 'Background', 'index.js'),
-    contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.js'),
-    panel: path.join(__dirname, 'src', 'pages', 'Panel', 'index.tsx'),
     inject: path.join(__dirname, 'src', 'pages', 'Inject', 'index.js'),
   },
   chromeExtensionBoilerplate: {
@@ -134,7 +132,7 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'src/pages/Content/content.styles.css',
+          from: 'src/pages/Inject/content.styles.css',
           to: path.join(__dirname, 'build'),
           force: true,
         },
@@ -210,12 +208,12 @@ var options = {
       chunks: ['popup'],
       cache: false,
     }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'src', 'pages', 'Panel', 'index.html'),
-      filename: 'panel.html',
-      chunks: ['panel'],
-      cache: false,
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: path.join(__dirname, 'src', 'pages', 'Panel', 'index.html'),
+    //   filename: 'panel.html',
+    //   chunks: ['panel'],
+    //   cache: false,
+    // }),
   ],
   infrastructureLogging: {
     level: 'info',
