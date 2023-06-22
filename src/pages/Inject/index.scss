@@ -7,7 +7,17 @@ body {
     width: 300px;
     right: 0;
     top: 0;
-    background: red;
+    padding: 5px;
+    padding-top: 64px;
+    background: rgb(90, 100, 236);
     height: 100vh;
     display: block;
+}
+.history-table {
+  border-collapse: collapse; /* Combine adjacent borders into a single border */
+  border: 1px solid black; /* Add a 1px solid black border to the table */
+  th, td {
+    border: 1px solid black; /* Add a 1px solid black border to table cells */
+    padding: 8px; /* Add some padding to table cells */
+  }
 }

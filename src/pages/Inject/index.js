@@ -2,7 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import HistoryPanel from './components/HistoryPanel';
 import { StorageAPI } from './helpers/storage';
+import { KEY_CRASH_HISTORY } from './config';
+
 import './index.scss';
+import { pushToLocalStorage } from './helpers/itemService';
 
 var globalObj = {
   totAmount: 0,
@@ -10,8 +13,8 @@ var globalObj = {
   isWin: false,
   isProgress: false,
   scrollWrap: null,
+  lastIssueText: '',
 };
-const KEY_CRASH_HISTORY = 'crash-history';
 
 function handleTable({
   scrollWrap: table,
@@ -44,9 +47,7 @@ function handleTable({
   );
   return result;
 }
-function currentTimeStamp() {
-  return Math.floor(Date.now() / 1000);
-}
+
 function pollingEvent() {
   const uiSwitch = document.querySelector('.all-bet .ui-switch');
   if (uiSwitch) {
@@ -57,23 +58,69 @@ function pollingEvent() {
         time: new Date(),
       },
     });
-    const state = document.querySelector('.all-bet .state');
+    const issueSelector = document.querySelector(
+      '.recent-list .game-item:last-child .issus'
+    );
+    if (!issueSelector) return;
+    const issueText = issueSelector.innerText;
 
     if (type) {
       // trenball
+      if (issueText) {
+        if (!globalObj.lastIssueText || globalObj.lastIssueText == issueText) {
+          globalObj.lastIssueText = issueText;
+          globalObj.rgNums = Array.from(
+            document.querySelectorAll('.info-wrap .info .his .nums')
+          ).map((e) => +parseCash(e.innerText));
+          globalObj.isWin = false;
+        } else {
+          if (!globalObj.isWin) {
+            const valueText = document.querySelector(
+              '.recent-list .game-item:last-child div:last-child'
+            ).innerText;
+            const bangValue = +parseCash(valueText);
+            try {
+              const [redBet, greenBet] = globalObj.rgNums;
+              const data = {
+                red: {
+                  bet: redBet,
+                  profit: bangValue < 2.0 ? redBet * 0.99 : 0,
+                },
+                green: {
+                  bet: greenBet,
+                  profit: bangValue >= 2.0 ? greenBet : 0,
+                },
+              };
+              pushToLocalStorage({ data, issueText, type: 'TRENBALL' });
+              document.dispatchEvent(updatedBCDataEvent);
+            } catch (error) {
+              console.log(error);
+            }
+
+            globalObj.isWin = true;
+          }
+        }
+      }
     } else {
       // classic
+      const state = document.querySelector('.all-bet .state');
 
       if (state) {
         const classList = state.classList;
 
         if (classList.contains('is-progress')) {
-          globalObj.totAmount = document.querySelector(
+          const totAmountSelector = document.querySelector(
             '.all-bet .state .amount'
-          ).outerText;
-          globalObj.players = document.querySelector(
+          );
+          if (totAmountSelector) {
+            globalObj.totAmount = totAmountSelector.outerText;
+          }
+          const playersSelector = document.querySelector(
             '.all-bet .state .players'
-          ).outerText;
+          );
+          if (playersSelector) {
+            globalObj.players = playersSelector.outerText;
+          }
           globalObj.scrollWrap = document.querySelector(
             '.all-bet .scroll-wrap table'
           );
@@ -82,15 +129,11 @@ function pollingEvent() {
           if (!globalObj.isWin) {
             if (globalObj.scrollWrap) {
               const res = handleTable(globalObj);
-              const history = StorageAPI.get(KEY_CRASH_HISTORY) || [];
-              const data = {
-                time: currentTimeStamp(),
-                summary: res.summary,
-              };
-              history.push(data);
-              StorageAPI.set(KEY_CRASH_HISTORY, history);
-              updatedBCDataEvent.detail.type = 'CLASSIC';
-              updatedBCDataEvent.detail.data = data;
+              pushToLocalStorage({
+                data: res.summary,
+                type: 'CLASSIC',
+                issueText,
+              });
               document.dispatchEvent(updatedBCDataEvent);
             }
           }

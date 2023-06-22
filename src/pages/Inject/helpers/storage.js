@@ -1,6 +1,6 @@
 export const StorageAPI = {
   set: function (key, data) {
-    localStorage.setItem(key, data);
+    localStorage.setItem(key, JSON.stringify(data));
   },
   get: function (key) {
     try {
