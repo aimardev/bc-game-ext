@@ -1,38 +1,12 @@
+import HistoryPanel from './components/HistoryPanel';
+import { StorageAPI } from './helpers/storage';
+import './index.scss';
+
 var totAmount = 0;
 var isWin = false;
 var isProgress = false;
 var scrollWrap = null;
 const KEY_CRASH_HISTORY = 'crash-history';
-
-const storage = {
-  set: function (data) {
-    return new Promise((res) =>
-      // chrome.storage.local.set({ [key]: value }, () => res(true))
-      chrome.runtime.sendMessage(
-        {
-          cmd: 'add_crash_data',
-          subtype: 'classic',
-          data,
-        },
-        (r) => res(r)
-      )
-    );
-  },
-  get: function () {
-    return new Promise((res) =>
-      // chrome.storage.local.set({ [key]: value }, () => res(true))
-      chrome.runtime.sendMessage(
-        {
-          cmd: 'get_crash_data',
-        },
-        (r) => res(r)
-      )
-    );
-  },
-  remove: function (key) {
-    localStorage.removeItem(key);
-  },
-};
 
 function handleTable(table, totalBet, players) {
   // Get all the tr elements within the table
@@ -64,7 +38,7 @@ function handleTable(table, totalBet, players) {
 function currentTimeStamp() {
   return Math.floor(Date.now() / 1000);
 }
-async function myCallback() {
+function myCallback() {
   const uiSwitch = document.querySelector('.all-bet .ui-switch');
   if (uiSwitch) {
     const type = uiSwitch.classList.contains('open');
@@ -92,12 +66,12 @@ async function myCallback() {
             if (scrollWrap) {
               const res = handleTable(scrollWrap, totAmount, players);
               console.log(res);
-              const history = (await storage.get(KEY_CRASH_HISTORY)) || [];
+              const history = StorageAPI.get(KEY_CRASH_HISTORY) || [];
               history.push({
                 time: currentTimeStamp(),
                 summary: res.summary,
               });
-              storage.set(KEY_CRASH_HISTORY, history);
+              StorageAPI.set(KEY_CRASH_HISTORY, history);
             }
           }
           isWin = true;
@@ -111,5 +85,41 @@ function parseCash(v) {
   return v.replace(/[^0-9.-]+/g, '');
 }
 
-setInterval(myCallback, 70);
-console.log('[myCallback] this is started');
+const editorBlockId = 'crash_history';
+const editorBlockClass = 'crash_history';
+
+const checkTheValidAddBlock = () => {
+  const editorBlock = document.querySelector(`div[data-id="${editorBlockId}"]`);
+  if (editorBlock) return false;
+
+  return true;
+};
+
+const addEditorBlock = () => {
+  const wrapperBlock = document.createElement('div');
+  wrapperBlock.setAttribute('data-id', editorBlockId);
+  wrapperBlock.setAttribute('class', editorBlockClass);
+  document.getElementsByTagName('body')[0].appendChild(wrapperBlock);
+  console.log('[wrapperBlock]', wrapperBlock);
+};
+
+function manipulateDOM() {
+  if (checkTheValidAddBlock()) {
+    addEditorBlock();
+    console.log('[manipulateDOM]');
+    setInterval(myCallback, 70);
+    ReactDOM.render(
+      <HistoryPanel />,
+      window.document.querySelector(`div[data-id="${editorBlockId}"`)
+    );
+  }
+
+  // Add your own DOM manipulation code here
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'manipulateDOM') {
+    manipulateDOM();
+    sendResponse({ status: 'success' });
+  }
+});

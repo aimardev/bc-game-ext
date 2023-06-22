@@ -1,0 +1,13 @@
+body {
+  display: flex;
+  position: relative;
+  
+}
+.crash_history {
+    width: 200px;
+    right: 0;
+    top: 0;
+    background: red;
+    height: 100vh;
+    display: block;
+}
