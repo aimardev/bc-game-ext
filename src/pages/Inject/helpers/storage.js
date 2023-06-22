@@ -3,8 +3,12 @@ export const StorageAPI = {
     localStorage.setItem(key, data);
   },
   get: function (key) {
-    const data = localStorage.getItem(key);
-    return JSON.parse(data || '{}');
+    try {
+      const data = localStorage.getItem(key);
+      return JSON.parse(data);
+    } catch (error) {
+      return null;
+    }
   },
   remove: function (key) {
     localStorage.removeItem(key);

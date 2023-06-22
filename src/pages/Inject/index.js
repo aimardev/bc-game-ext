@@ -1,14 +1,23 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import HistoryPanel from './components/HistoryPanel';
 import { StorageAPI } from './helpers/storage';
 import './index.scss';
 
-var totAmount = 0;
-var isWin = false;
-var isProgress = false;
-var scrollWrap = null;
+var globalObj = {
+  totAmount: 0,
+  players: 0,
+  isWin: false,
+  isProgress: false,
+  scrollWrap: null,
+};
 const KEY_CRASH_HISTORY = 'crash-history';
 
-function handleTable(table, totalBet, players) {
+function handleTable({
+  scrollWrap: table,
+  totAmount: totalBet,
+  players: players,
+}) {
   // Get all the tr elements within the table
   const rows = Array.from(table.querySelectorAll('tr'));
   // Loop through each row
@@ -38,10 +47,16 @@ function handleTable(table, totalBet, players) {
 function currentTimeStamp() {
   return Math.floor(Date.now() / 1000);
 }
-function myCallback() {
+function pollingEvent() {
   const uiSwitch = document.querySelector('.all-bet .ui-switch');
   if (uiSwitch) {
     const type = uiSwitch.classList.contains('open');
+
+    const updatedBCDataEvent = new CustomEvent('updatedBCDataEvent', {
+      detail: {
+        time: new Date(),
+      },
+    });
     const state = document.querySelector('.all-bet .state');
 
     if (type) {
@@ -53,29 +68,34 @@ function myCallback() {
         const classList = state.classList;
 
         if (classList.contains('is-progress')) {
-          totAmount = document.querySelector(
+          globalObj.totAmount = document.querySelector(
             '.all-bet .state .amount'
           ).outerText;
-          players = document.querySelector(
+          globalObj.players = document.querySelector(
             '.all-bet .state .players'
           ).outerText;
-          scrollWrap = document.querySelector('.all-bet .scroll-wrap table');
-          isWin = false;
+          globalObj.scrollWrap = document.querySelector(
+            '.all-bet .scroll-wrap table'
+          );
+          globalObj.isWin = false;
         } else {
-          if (!isWin) {
-            if (scrollWrap) {
-              const res = handleTable(scrollWrap, totAmount, players);
-              console.log(res);
+          if (!globalObj.isWin) {
+            if (globalObj.scrollWrap) {
+              const res = handleTable(globalObj);
               const history = StorageAPI.get(KEY_CRASH_HISTORY) || [];
-              history.push({
+              const data = {
                 time: currentTimeStamp(),
                 summary: res.summary,
-              });
+              };
+              history.push(data);
               StorageAPI.set(KEY_CRASH_HISTORY, history);
+              updatedBCDataEvent.detail.type = 'CLASSIC';
+              updatedBCDataEvent.detail.data = data;
+              document.dispatchEvent(updatedBCDataEvent);
             }
           }
-          isWin = true;
-          isProgress = false;
+          globalObj.isWin = true;
+          globalObj.isProgress = false;
         }
       }
     }
@@ -107,11 +127,10 @@ function manipulateDOM() {
   if (checkTheValidAddBlock()) {
     addEditorBlock();
     console.log('[manipulateDOM]');
-    setInterval(myCallback, 70);
-    ReactDOM.render(
-      <HistoryPanel />,
-      window.document.querySelector(`div[data-id="${editorBlockId}"`)
-    );
+    const selector = document.querySelector(`div[data-id="${editorBlockId}"`);
+    setInterval(pollingEvent, 70, selector);
+
+    ReactDOM.render(<HistoryPanel />, selector);
   }
 
   // Add your own DOM manipulation code here
